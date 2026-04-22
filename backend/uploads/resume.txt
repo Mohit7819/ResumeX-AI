@@ -1,0 +1,15 @@
+My name is Vikram Singh , and I graduated in 2017 . I had total 5 years of professional experience. 
+
+I started my career as Linux system Administartor where i gained valuable knowledge and skills in managing 
+
+linux based system.
+
+Currently I am working as devops engineer in my current company, As a devops engineer my responsibilitis revolve 
+
+around mantaining the infrastructure using tools like terraform and managing the resources in the azure cloud environment.
+
+I also handle the configuration and maintenance of CI/CD pipelines, ensuring smooth and efficient deployment process.
+
+
+
+
