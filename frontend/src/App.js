@@ -41,20 +41,30 @@ function App() {
   };
 
   const getMatches = async () => {
-    try {
-      const res = await axios.get("http://127.0.0.1:8000/match/1");
+  try {
+    setResults([]); // clear old results first
 
-      if (res.data.rankings) {
-        setResults(res.data.rankings);
-      } else {
-        setResults(res.data);
-      }
+    const res = await axios.get("http://127.0.0.1:8000/match/1");
 
-      setMsg("Matching Complete");
-    } catch {
-      setMsg("Matching Failed");
-    }
-  };
+    const data = res.data.rankings || res.data;
+
+    // remove duplicates
+    const unique = data.filter(
+      (item, index, self) =>
+        index ===
+        self.findIndex(
+          (t) =>
+            (t.resume || t.name) === (item.resume || item.name)
+        )
+    );
+
+    setResults(unique);
+
+    setMsg("Matching Complete");
+  } catch {
+    setMsg("Matching Failed");
+  }
+};
 
   return (
     <div style={page}>

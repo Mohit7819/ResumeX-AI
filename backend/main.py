@@ -30,25 +30,25 @@ cursor = conn.cursor()
 
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS users(
-id INTEGER PRIMARY KEY,
-username TEXT,
-password TEXT
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT,
+    password TEXT
 )
 """)
 
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS jobs(
-id INTEGER PRIMARY KEY,
-title TEXT,
-description TEXT
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT,
+    description TEXT
 )
 """)
 
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS resumes(
-id INTEGER PRIMARY KEY,
-filename TEXT,
-content TEXT
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    filename TEXT,
+    content TEXT
 )
 """)
 
@@ -105,7 +105,7 @@ def create_job(job: Job):
     return {"status": "job added"}
 
 
-# Upload Resume (.txt + .docx)
+# Upload Resume
 @app.post("/upload_resume")
 async def upload_resume(file: UploadFile = File(...)):
 
@@ -119,11 +119,11 @@ async def upload_resume(file: UploadFile = File(...)):
     text = ""
 
     try:
-        # TXT file
+        # TXT File
         if file.filename.lower().endswith(".txt"):
             text = content.decode(errors="ignore")
 
-        # DOCX file
+        # DOCX File
         elif file.filename.lower().endswith(".docx"):
             doc = Document(path)
             text = "\n".join([para.text for para in doc.paragraphs])
@@ -134,6 +134,11 @@ async def upload_resume(file: UploadFile = File(...)):
     except:
         text = ""
 
+    # OLD RESUMES DELETE
+    cursor.execute("DELETE FROM resumes")
+    conn.commit()
+
+    # NEW RESUME SAVE
     cursor.execute(
         "INSERT INTO resumes(filename,content) VALUES(?,?)",
         (file.filename, text)
@@ -141,10 +146,10 @@ async def upload_resume(file: UploadFile = File(...)):
 
     conn.commit()
 
-    return {"status": "uploaded"}
+    return {"status": "uploaded successfully"}
 
 
-# Match Resume with Job
+# Match Resume
 @app.get("/match/{job_id}")
 def match(job_id: int):
 
@@ -195,3 +200,9 @@ def match(job_id: int):
     )
 
     return {"rankings": results}
+
+
+# Run Server
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)
